@@ -107,4 +107,4 @@ for(i in 4:length(namesDT)){
 }
 
 # saves the resulting dataset
-write.table(resultingDT, file='../data/resultingDataset.csv', row.name=FALSE) 
+write.table(resultingDT, file='../data/resultingDataset.txt', row.name=FALSE) 

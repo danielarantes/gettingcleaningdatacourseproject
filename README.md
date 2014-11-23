@@ -1,4 +1,4 @@
-Getting and Clearning Data Course project
+Getting and Cleaning Data Course project
 ================================
 
 This repository contains the implementation of the following requirements as the "Getting and Cleaning Data" course project. 
@@ -14,10 +14,11 @@ The goal is to create one R script called run_analysis.R that does the following
 4. Appropriately labels the data set with descriptive variable names. 
 5. From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
 
-Below is a short description of the directions I used while doing this project.
-At first I decided to use data.table package instead of using data.frame's. 
+Below is a short description of the directions I used while doing this project. Note that the requirements where **NOT** implemented in the order they appear above. 
 
-1. On the first part, the general idea is to read both data sets and rbind them. Then you find out there is no read.fwf for data.table. It would be possible to load into a data.frame and then cast it to data.table. One possible command to read the file was:
+It's important to mention that I decided to use **data.table** package instead of using data.frame's. 
+
+- On the first part, the general idea is to read both data sets and rbind them. Then you find out there is no read.fwf for data.table. It would be possible to load into a data.frame and then cast it to data.table. One possible command to read the file was:
 ```{r}
 dt<-as.data.table(read.fwf('test/X_test.txt',header=F, widths=rep(c(-1,15),561), buffersize= 10)))
 ```
@@ -30,13 +31,13 @@ dt_test<-fread('test/X_test2.txt', sep=' ')
 ```
 The same approach is used on both data sets and its smaller files are also loaded and binded to the data.table's. At the end I used rbindlist with the test and train data.tables to create a single data.table with everything.
 
-2. For the second piece of this project I used the file features.txt. This file has all the variable names and their column position. The idea was to grep the file features.txt to get what columns had mean or std in their names and then filter the data.table created in step one (the column names were set previously). My assumption here was to take ALL variables that included mean or std in their names.
+- For the second piece of this project I used the file features.txt. This file has all the variable names and their column position. The idea was to grep the file features.txt to get what columns had mean or std in their names and then filter the data.table created in step one (the column names were set previously). My assumption here was to take ALL variables that included mean or std in their names.
 
-3. The activity descriptions can be found in the file activity_labels.txt. The contents of this file was loaded into a data.frame and then used to add a new column with the activity descriptions in the data.table at the end of the process.
+- The activity descriptions can be found in the file activity_labels.txt. The contents of this file was loaded into a data.frame and then used to add a new column with the activity descriptions in the data.table at the end of the process.
 
-4. The labels added to the resulting dataset was basically the variable names found on features.txt file with a bit of editting. The variables were uppercased and a few other edits were made.
+- The labels added to the resulting dataset was basically the variable names found on features.txt file with a bit of editting. The variables were uppercased and a few other edits were made.
 
-5. For the fifth part I used the data.table option to create a key on activity number and subject id and then grouped the rows based on this key, for each group calculated the mean. The command used was the following:
+- For the fifth part I used the data.table option to create a key on activity number and subject id and then grouped the rows based on this key, for each group calculated the mean. The command used was the following:
 ```{r}
 DT[,lapply(.SD,mean),by=key(DT)]
 ```
