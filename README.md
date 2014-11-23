@@ -44,6 +44,6 @@ DT[,lapply(.SD,mean),by=key(DT)]
 The column names were renamed to indicate that it was a summarization of the original values. MEAN_OF was added to the variable names.
 The data was saved with the command write.table using row.name=FALSE and can be reloaded using the following commands:
 ```{r}
-fread('resultingDataset.csv', sep=' ')
-read.table('resultingDataset.csv', sep=' ', header=T)
+fread('resultingDataset.txt', sep=' ')
+read.table('resultingDataset.txt', sep=' ', header=T)
 ```
