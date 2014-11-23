@@ -18,10 +18,16 @@ Below is a short description of the directions I used while doing this project.
 At first I decided to use data.table package instead of using data.frame's. 
 
 1. On the first part, the general idea is to read both data sets and rbind them. Then you find out there is no read.fwf for data.table. It would be possible to load into a data.frame and then cast it to data.table. One possible command to read the file was:
+```{r}
 dt<-as.data.table(read.fwf('test/X_test.txt',header=F, widths=rep(c(-1,15),561), buffersize= 10)))
+```
 The command above takes a little over 60 seconds to run.
 Then I checked on how to use the fread command for fixed width field files and came up with a two step process. Looking quickly at the data it's clear that it is separated by single spaces, but in some cases for positive numbers, it appears to be double spaces. It messed up a normal read.csv or other functions. 
 But I found the two step process a lot better and faster than the previous approach. First it substitutes double spaces by one single space and also substitutes lines that starts with one space to no space using sed. It creates a new file and then I read this new file now with single space separator with fread in less than 1/2 second into a data.table.
+```{r}
+system("sed 's/  / /g' < test/X_test.txt | sed 's/^ //g' > test/X_test2.txt")
+dt_test<-fread('test/X_test2.txt', sep=' ')
+```
 The same approach is used on both data sets and its smaller files are also loaded and binded to the data.table's. At the end I used rbindlist with the test and train data.tables to create a single data.table with everything.
 
 2. For the second piece of this project I used the file features.txt. This file has all the variable names and their column position. The idea was to grep the file features.txt to get what columns had mean or std in their names and then filter the data.table created in step one (the column names were set previously). My assumption here was to take ALL variables that included mean or std in their names.
@@ -31,9 +37,12 @@ The same approach is used on both data sets and its smaller files are also loade
 4. The labels added to the resulting dataset was basically the variable names found on features.txt file with a bit of editting. The variables were uppercased and a few other edits were made.
 
 5. For the fifth part I used the data.table option to create a key on activity number and subject id and then grouped the rows based on this key, for each group calculated the mean. The command used was the following:
+```{r}
 DT[,lapply(.SD,mean),by=key(DT)]
+```
 The column names were renamed to indicate that it was a summarization of the original values. MEAN_OF was added to the variable names.
 The data was saved with the command write.table using row.name=FALSE and can be reloaded using the following commands:
+```{r}
 fread('resultingDataset.csv', sep=' ')
 read.table('resultingDataset.csv', sep=' ', header=T)
-
+```
